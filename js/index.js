@@ -19,46 +19,92 @@ return images.reduce((acc, image) => {
       src=${image.preview}
       data-source=${image.original}
       data-index=${image.index}
-      alt=${image.description}
+      alt='${image.description}'
     />
   </a>
 </li>`
 }, '')}  
 refs.gallery.innerHTML = createMarkUp(images);
 
-//==========================================
-refs.gallery.addEventListener('click', openLargeImg);
-refs.button.addEventListener('click', closeLargeImg);
 
-function openLargeImg (event) {
+const openLargeImg =  (event) => {
   window.addEventListener('keydown', onPressEsc);
   event.preventDefault();
-  if (event.target.nodeName !== 'IMG')
+  if (event.target.nodeName === 'IMG')
   {
-    return; 
-  }
-  else
-  {
-  refs.modal.classList.add('is-open');
-  refs.largeImage.src = event.target.dataset.source;
-  
-}}
+    refs.modal.classList.add('is-open');
+    refs.largeImage.src = event.target.dataset.source;
+  } 
+}
 
-function closeLargeImg (event) {
+refs.gallery.addEventListener('click', openLargeImg);
+
+const closeLargeImg = function (event) {
   window.removeEventListener('keydown', onPressEsc);
   refs.modal.classList.remove('is-open');
   refs.largeImage.src = '';
   refs.largeImage.alt = '';
 }
+
+refs.button.addEventListener('click', closeLargeImg);
+
 refs.overlay.addEventListener('click', event => {
   if (event.target === event.currentTarget) {
     closeLargeImg();
   }
 })
 
-function onPressEsc (event) {
-  if (event.code === 'Escape')
-  {
+const onPressEsc = function (event) {
+if (event.code === 'Escape')
+{
     closeLargeImg();
-}}
+}
+if (event.code === 'ArrowRight') 
+{
+  sliderRight()
+}
+if (event.code === 'ArrowLeft') 
+ {
+    sliderLeft()
+  }
+}
 
+//=================Slider======================================
+
+let activeIndex=0;
+
+refs.gallery.addEventListener ('click', event => {
+  activeIndex = Number(event.target.dataset.index);
+console.log(activeIndex);
+
+})
+  
+const sliderRight = function () {
+  if (activeIndex >= 0 && activeIndex < images.length-1)
+    {
+      activeIndex +=1;
+      console.log(activeIndex);
+      return refs.largeImage.src = images[activeIndex].original;
+    }
+  else 
+    {
+      activeIndex = 0;
+      return refs.largeImage.src = images[activeIndex].original;
+    }
+}
+
+const sliderLeft = function () {
+  if (activeIndex > 0 && activeIndex <= images.length-1)
+    {
+      activeIndex -=1;
+      console.log(activeIndex);
+      return refs.largeImage.src = images[activeIndex].original;
+  }
+  else {
+    activeIndex = images.length - 1;
+    return refs.largeImage.src = images[activeIndex].original;  
+ }
+   }
+
+  
+  
